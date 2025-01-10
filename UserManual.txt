@@ -1,0 +1,28 @@
+The program consists of X files. In order to run these files some certain installations are needed. First, make sure python is installed and can compile and run a program. Then a few “pip install x” commands in a command console. In no particular order they are:
+	1. pip install tensorflow	- is slow to install
+	2. pip install keras
+	3. pip install np_utils
+	4. pip install seaborn
+	5. pip install tkinterdnd2
+	6. pip install opencv-python for cv2
+	7. pip install emnist
+	8. pip install pydot
+	9. pip install scikit-learn
+
+The last install which is needed to run and make a model is installing the EMNIST dataset [9], specifically “The database in original MNIST format”. Once downloaded, navigate to Users/your_user/.cache and make a directory called emnist if there isn’t one already. Inside the emnist folder place the newly downloaded and still zipped emnist dataset. Lastly, rename the zipped dataset to “emnist”. If this doesn’t work, instead try running the program without the dataset placed, causing a “BadZipFile: File is not a zip file” error, and then the emnist folder should be made in /.cache with a non-functional emnist dataset inside. Simply replace this dataset with the downloaded dataset renamed to just “emnist”.
+
+UserProgram.py is the final program which would be the program any normal user interacts with. Once run, a GUI is created in which you choose an image and can switch settings for how precise the program should be when determining when a new word or character begins. This setting may need to be played around with based on the size of the image. When an image is selected the program first divides up any sentences into words. Then the words are individually divided into characters. These characters are then sent to CharPredict.py which makes the predictions for each and has no use outside of being used by UserProgram. After a short delay a new window is shown which shows the predicted sentences and words.
+
+CharPredict.py predicts a single character given a CNN model. The default is CombinedModel.h5 but can be exchanged for any other in the load_model function near the top.
+
+SymbolMaker.py was used to generate custom images for use in the dataset. The wanted symbols are put into the custom_symbols list and the number of images you wish to print is written at num_images_per_symbol, the standard is 2400 as this is the same number of images per character as the balanced EMNIST dataset uses. The program then, using Pillow, creates the images into a generated_symbols folder, loaded in the output_folder variable. Be warned that this program will create thousands of 28x28 pixel images in the output folder in your current directory and may take some time to run. Storage wise these images don't take up less than 10 MB if run with the current number of symbols and can easily be removed by just removing the output_folder when finished.
+
+TrainCombined.py is used to generate the model based on the combined dataset, the only variables which could have to be changed are custom_symbols, custom_symbols_folder and num_images_per_symbol to match those of the symbolmaker.py. This program also requires SymbolMaker to have been run as it takes images from the generated_symbols folder. The default name given to the model is CombinedModel.h5 but can be changed in the cnn.save function near the bottom. Expected runtime is 10 minutes on a relatively powerful computer
+
+TrainEMNIST.py is a runnable program which will make a model based on only the data from EMNIST. Used for mostly initial testing and accuracy comparison. The only variable to change here is the name given to the model, otherwise EMNISTModel.h5 is selected. Expected runtime is roughly 10 minutes on a relatively powerful computer.
+
+There are also two files ConfMatEMNIST.py and ConfMatCombined.py. These generate confusion matrices showing what certain characters have been predicted as. The EMNIST file requires no changing of variables as long as the EMNIST dataset is correctly installed. The Combined file needs a folder of test custom test images and the number of images for each custom symbol. We used the SymbolMaker.py file to create a folder of 400 new images of each symbol to do this.
+
+When changing the amount of custom symbols, certain variables among the files will have to be changed. The custom_symbols list and class_labels dictionary especially will have to be updated among most of the files. In TrainCombined and ConfMatCombined, additional elif statements will need to be added to or removed from the “for counter, …” loop.
+
+To change which model to use, the load_model(r’Model.h5’) function will have to be changed to using the corresponding model name in CharPredict and the two ConfMat files
